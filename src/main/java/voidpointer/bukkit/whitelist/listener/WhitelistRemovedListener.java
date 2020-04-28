@@ -7,7 +7,7 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  */
@@ -23,18 +23,25 @@ import org.bukkit.plugin.Plugin;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import voidpointer.bukkit.framework.locale.Locale;
+import voidpointer.bukkit.whitelist.config.WhitelistConfig;
 import voidpointer.bukkit.whitelist.event.WhitelistRemovedEvent;
 import voidpointer.bukkit.whitelist.message.KickMessage;
 
 /** @author VoidPointer aka NyanGuyMF */
 @RequiredArgsConstructor
 public final class WhitelistRemovedListener implements Listener {
+    @NonNull private final WhitelistConfig whitelistConfig;
     @NonNull private final Locale locale;
 
     @EventHandler(priority=EventPriority.HIGHEST)
     public void onRemoved(final WhitelistRemovedEvent event) {
         final String playerName = event.getPlayerName();
 
+        if (whitelistConfig.isEnabled())
+            kickIfOnline(playerName);
+    }
+
+    private void kickIfOnline(final String playerName) {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             if (onlinePlayer.getName().equals(playerName)) {
                 kickRemoved(onlinePlayer);
